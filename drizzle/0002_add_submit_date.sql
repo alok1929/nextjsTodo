@@ -1,4 +1,4 @@
-CREATE TABLE todos (
+CREATE TABLE IF NOT EXISTS todos (
   id SERIAL PRIMARY KEY,
   content TEXT NOT NULL,
   submit_date TIMESTAMP,
