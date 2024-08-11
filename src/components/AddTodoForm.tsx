@@ -69,7 +69,7 @@ export default function AddTodoForm({ onAdd }: Props) {
             </PopoverTrigger>
             <PopoverContent
               align="start"
-              className="flex w-auto flex-col space-y-2 p-2"
+              className="flex w-auto flex-col space-y-2 p-2 "
             >
               <Select
                 onValueChange={(value) =>
@@ -92,7 +92,7 @@ export default function AddTodoForm({ onAdd }: Props) {
               </div>
             </PopoverContent>
           </Popover>
-          <Button type="submit" className='ml-2'>
+          <Button type="button" className='bg-blue-600 ml-2'>
             Save
           </Button>
         </div>

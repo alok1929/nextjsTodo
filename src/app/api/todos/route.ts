@@ -9,7 +9,8 @@ export async function GET() {
       id: todos.id,
       content: todos.content,
       submitDate: todos.submitDate,
-      createdAt: todos.createdAt
+      createdAt: todos.createdAt,
+      tickonoff:todos.tickonoff
     }).from(todos).orderBy(todos.createdAt);
     console.log('Fetched todos:', result); // Add this line for debugging
     return NextResponse.json(result);
@@ -19,23 +20,45 @@ export async function GET() {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const { id, tickonoff } = await request.json();
+    console.log('Received PATCH data:', { id, tickonoff });
+
+    if (id === undefined || tickonoff === undefined) {
+      return NextResponse.json({ error: 'ID and tickonoff are required' }, { status: 400 });
+    }
+
+    const result = await db.update(todos)
+      .set({ tickonoff })
+      .where(eq(todos.id, id))
+      .returning();
+
+    if (result.length === 0) {
+      return NextResponse.json({ error: 'Todo not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(result[0]);
+  } catch (error) {
+    console.error('Error in PATCH /api/todos:', error);
+    return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    const { content, submitDate } = await request.json();
+    const { content, submitDate, tickonoff = false } = await request.json();
 
-    // Convert submitDate to a JavaScript Date object
     const parsedDate = submitDate ? new Date(submitDate) : null;
 
-    // Log received data for debugging
-    console.log('Received POST data:', { content, submitDate });
+    console.log('Received POST data:', { content, submitDate, tickonoff });
 
-    // Insert into database
     const result = await db.insert(todos).values({
       content,
       submitDate: parsedDate,
+      tickonoff,  // Add this line
     }).returning();
 
-    // Return the inserted data
     return NextResponse.json(result[0]);
   } catch (error) {
     console.error('Error in POST /api/todos:', error);
