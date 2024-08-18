@@ -26,18 +26,20 @@ type Props = {
 export default function AddTodoForm({ onAdd }: Props) {
   const [content, setContent] = useState('');
   const [date, setDate] = React.useState<Date>();
+  const [priority, setPriority] = useState('medium');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formattedDate = date ? format(date, "EEE MMM dd yyyy HH:mm:ss") : null;
-    console.log('Submitting todo:', { content, submitDate: formattedDate }); // Debugging
+    console.log('Submitting todo:', { content, submitDate: formattedDate, priority }); // Debugging
     await fetch('/api/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, submitDate: formattedDate }),
+      body: JSON.stringify({ content, submitDate: formattedDate, priority }),
     });
     setContent('');
     setDate(undefined);
+    setPriority('medium');
     onAdd();
   };
 
@@ -63,8 +65,7 @@ export default function AddTodoForm({ onAdd }: Props) {
                   !date && "text-muted-foreground"
                 )}
               >
-                
-                {date ? format(date, "PPP") : <span> select date</span>}
+                {date ? format(date, "PPP") : <span>Select date</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent
@@ -87,17 +88,25 @@ export default function AddTodoForm({ onAdd }: Props) {
                 </SelectContent>
               </Select>
               <div className="rounded-md border">
-                
                 <Calendar mode="single"  selected={date} onSelect={setDate} />
               </div>
             </PopoverContent>
           </Popover>
-          <Button type="button" className='bg-blue-600 ml-2'>
+          <Select value={priority} onValueChange={setPriority}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="high">High</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button type="submit" className='bg-blue-600 ml-2'>
             Save
           </Button>
         </div>
       </div>
-
     </form>
   );
 }

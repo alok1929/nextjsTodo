@@ -10,7 +10,8 @@ export async function GET() {
       content: todos.content,
       submitDate: todos.submitDate,
       createdAt: todos.createdAt,
-      tickonoff: todos.tickonoff
+      tickonoff: todos.tickonoff,
+      priority: todos.priority // Add this line
     }).from(todos).orderBy(todos.createdAt);
     console.log('Fetched todos:', result); // Add this line for debugging
     return NextResponse.json(result);
@@ -58,16 +59,17 @@ export async function PATCH(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { content, submitDate, tickonoff = false } = await request.json();
+    const { content, submitDate, tickonoff = false, priority } = await request.json();
 
     const parsedDate = submitDate ? new Date(submitDate) : null;
 
-    console.log('Received POST data:', { content, submitDate, tickonoff });
+    console.log('Received POST data:', { content, submitDate, tickonoff, priority });
 
     const result = await db.insert(todos).values({
       content,
       submitDate: parsedDate,
-      tickonoff,  // Add this line
+      tickonoff,
+      priority
     }).returning();
 
     return NextResponse.json(result[0]);
@@ -76,7 +78,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
   }
 }
-
 
 
 export async function DELETE(request: Request) {
