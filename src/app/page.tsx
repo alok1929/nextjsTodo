@@ -5,7 +5,8 @@ import AddTodoForm from '@/components/AddTodoForm';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Carousell from '@/components/carouse';
-
+import GAuth from '@/components/gAuth';  // Changed to capital 'G'
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -16,10 +17,15 @@ export default function Home() {
 
   return (
     <main className=''>
-      <div className='flex justify-center items-center p-3 font-serif text-xl'>Todolist</div>
-      <AddTodoForm onAdd={handleAdd} />
-     
-      <TodoList  key={refreshKey} />
-    </main>
+    <div className='flex justify-between   bg-slate-300 items-center'>
+      <div className='flex justify-center m-2 font-serif font-bold p-1 items-center'>Todolist</div>
+      <Badge className='flex justify-end p-1 mr-2 '>
+        <GAuth />
+      </Badge>
+    </div>
+
+    <AddTodoForm onAdd={handleAdd}  />
+    <TodoList key={refreshKey} />
+  </main>
   );
 }

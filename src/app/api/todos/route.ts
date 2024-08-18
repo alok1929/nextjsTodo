@@ -10,7 +10,7 @@ export async function GET() {
       content: todos.content,
       submitDate: todos.submitDate,
       createdAt: todos.createdAt,
-      tickonoff:todos.tickonoff
+      tickonoff: todos.tickonoff
     }).from(todos).orderBy(todos.createdAt);
     console.log('Fetched todos:', result); // Add this line for debugging
     return NextResponse.json(result);
@@ -20,24 +20,35 @@ export async function GET() {
   }
 }
 
+
+
 export async function PATCH(request: Request) {
   try {
-    const { id, tickonoff } = await request.json();
-    console.log('Received PATCH data:', { id, tickonoff });
+    const { id, tickonoff, content } = await request.json();
+    console.log('Received PATCH request:', { id, tickonoff, content });
 
-    if (id === undefined || tickonoff === undefined) {
-      return NextResponse.json({ error: 'ID and tickonoff are required' }, { status: 400 });
+    if (id === undefined) {
+      console.log('Invalid request data');
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
+    const updateData: { tickonoff?: boolean; content?: string } = {};
+    if (tickonoff !== undefined) updateData.tickonoff = tickonoff;
+    if (content !== undefined) updateData.content = content;
+
     const result = await db.update(todos)
-      .set({ tickonoff })
+      .set(updateData)
       .where(eq(todos.id, id))
       .returning();
 
+    console.log('Update result:', result);
+
     if (result.length === 0) {
+      console.log('Todo not found');
       return NextResponse.json({ error: 'Todo not found' }, { status: 404 });
     }
 
+    console.log('Sending response:', result[0]);
     return NextResponse.json(result[0]);
   } catch (error) {
     console.error('Error in PATCH /api/todos:', error);

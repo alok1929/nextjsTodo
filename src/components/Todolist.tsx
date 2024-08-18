@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { addDays, format, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { Badge } from './ui/badge';
 import { Checkbox } from "@/components/ui/checkbox"
+import {  MdOutlineDelete } from "react-icons/md";
+
 
 
 type Todo = {
@@ -83,7 +85,7 @@ export default function TodoList() {
 
   const handleTickChange = async (id: number, checked: boolean) => {
     try {
-      console.log('Sending PATCH request:', { id, tickonoff: checked });
+      console.log('Attempting to send PATCH request:', { id, tickonoff: checked });
       const response = await fetch('/api/todos', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -91,14 +93,14 @@ export default function TodoList() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${JSON.stringify(errorData)}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server responded with an error:', response.status, errorData);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const updatedTodo = await response.json();
-      console.log('Updated todo:', updatedTodo);
+      console.log('Successfully updated todo:', updatedTodo);
 
-      // Update the local state instead of fetching all todos again
       setTodos(prevTodos =>
         prevTodos.map(todo =>
           todo.id === id ? { ...todo, tickonoff: checked } : todo
@@ -106,6 +108,12 @@ export default function TodoList() {
       );
     } catch (error) {
       console.error('Error updating todo:', error);
+      // Revert the checkbox state in case of error
+      setTodos(prevTodos =>
+        prevTodos.map(todo =>
+          todo.id === id ? { ...todo, tickonoff: !checked } : todo
+        )
+      );
     }
   };
 
@@ -133,6 +141,7 @@ export default function TodoList() {
                 <div className='flex space-x-2 '>
                   <div>
                     <Checkbox
+                      className='rounded-full'
                       checked={todo.tickonoff}
                       onCheckedChange={(checked) => handleTickChange(todo.id, checked as boolean)}
                     />
@@ -149,10 +158,10 @@ export default function TodoList() {
 
                 <Button
                   size="sm"
+                  type="submit"
                   onClick={() => deleteTodo(todo.id)}
                 >
-
-                  Delete
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 1C5.22386 1 5 1.22386 5 1.5C5 1.77614 5.22386 2 5.5 2H9.5C9.77614 2 10 1.77614 10 1.5C10 1.22386 9.77614 1 9.5 1H5.5ZM3 3.5C3 3.22386 3.22386 3 3.5 3H5H10H11.5C11.7761 3 12 3.22386 12 3.5C12 3.77614 11.7761 4 11.5 4H11V12C11 12.5523 10.5523 13 10 13H5C4.44772 13 4 12.5523 4 12V4L3.5 4C3.22386 4 3 3.77614 3 3.5ZM5 4H10V12H5V4Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                 </Button>
               </div>
               {index < filteredTodos.length - 1 && <Separator className="my-2" />}
