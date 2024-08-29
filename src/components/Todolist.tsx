@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { MdOutlineDelete } from "react-icons/md";
 import { Select, SelectContent, SelectItem } from './ui/select';
 import { SelectTrigger, SelectValue } from './ui/select';
+import AddTodoForm from './AddTodoForm';
 
 
 type Todo = {
@@ -130,15 +131,24 @@ export default function TodoList() {
     }
   };
 
+  const completedCount = todos.filter(todo => todo.tickonoff).length;
+
+
   const handlePriorityChange = (value: string) => {
     setPriorityFilter(value as 'high' | 'medium' | 'low' | 'all');
   };
 
+  const handleAdd = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
+
   return (
     <div className="max-w-full  mx-auto">
-      <h2 className='px-3 m-1 mt-8 font-semibold text-lg'>Your Todos:</h2>
-
+      <div className="flex justify-center items-center px-4 py-3">
+          <AddTodoForm onAdd={handleAdd} />
+        </div>
       <div className='flex items-center space-x-4 justify-end mb-4 mr-4'>
+     
         <select onChange={handleDateChange} className='relative flex  cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50' >
           <option value="">All Dates</option>
           <option value="0">Today</option>
@@ -157,8 +167,11 @@ export default function TodoList() {
             <SelectItem value="low">Low</SelectItem>
           </SelectContent>
         </Select>
+     
       </div>
-
+      <p className="text-sm px-4  text-gray-600">
+          Completed Todos: <span className="font-bold">{completedCount}</span>
+        </p>
       <ScrollArea className="h-[350px] m-3 max-w-full rounded-md border">
         <div className="p-4 py-1 m-2">
           {filteredTodos.map((todo, index) => (
@@ -195,6 +208,7 @@ export default function TodoList() {
                       </Badge>
                     ) : <></>}
                   </div>
+
                 </div>
                 <Button
                   size="sm"

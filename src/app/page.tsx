@@ -1,32 +1,38 @@
 'use client';
 
+import { useState } from 'react';
+import Sidebar from '@/components/Sidebar';
 import TodoList from '@/components/Todolist';
 import AddTodoForm from '@/components/AddTodoForm';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Carousell from '@/components/carouse';
-import GAuth from '@/components/gAuth';  // Changed to capital 'G'
-import { Badge } from '@/components/ui/badge';
+import GAuth from '@/components/gAuth';
 import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { SeparatorHorizontal, TypeOutline } from 'lucide-react';
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleAdd = () => {
-    setRefreshKey((prev) => prev + 1);
-  };
+ 
 
   return (
-    <main className='bg-slate-100'>
-    <div className='flex justify-between border-2 border-b-black p-1  items-center'>
-      <div className='flex justify-center m-2 font-serif font-bold p-1 items-center'>Todolist</div>
-      <div className='mr-4'>
-      <GAuth />
-      </div>
-    </div>
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar />
+      <main className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex justify-between items-center p-4">
+          <h3 className="text-2xl font-bold text-gray-800">
 
-    <AddTodoForm onAdd={handleAdd}  />
-    <TodoList key={refreshKey} />
-  </main>
+          </h3>
+        </div>
+        <p className='flex justify-center items-center text-gray-400'> 
+        animation will come here
+
+        </p>
+        <Separator className='m-2' />
+        <ScrollArea className="flex-1 px-4">
+          <TodoList key={refreshKey} />
+        
+        </ScrollArea>
+      </main>
+    </div>
   );
 }

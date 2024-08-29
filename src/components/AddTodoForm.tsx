@@ -18,6 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React from 'react';
+import { Textarea } from "@/components/ui/textarea"
+
+
+
 
 type Props = {
   onAdd: () => void;
@@ -44,7 +48,7 @@ export default function AddTodoForm({ onAdd }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className='px-2'>
+    <form onSubmit={handleSubmit} className='px-2 py-1'>
       <div className='p-2'>
         <Input
           type="text"
