@@ -30,7 +30,7 @@ type Props = {
 export default function AddTodoForm({ onAdd }: Props) {
   const [content, setContent] = useState('');
   const [date, setDate] = React.useState<Date>();
-  const [priority, setPriority] = useState('medium');
+  const [priority, setPriority] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
